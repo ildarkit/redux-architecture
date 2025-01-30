@@ -8,7 +8,6 @@ export const gameStartedEvent = createAction<{
   gameStatus: GameStatusInProgress;
 }>("event/game/started");
 
-
 export const timeOverEvent = createAction<{
   gameStatus: GameStatusInProgress;
   gameTimers: GameTimers;

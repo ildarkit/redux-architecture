@@ -1,5 +1,6 @@
 import {
   gameOverEvent,
+  gameStartedEvent,
   gameViewedEvent,
   historyViewedEvent,
   moveCompletedEvent,
@@ -9,6 +10,7 @@ import { createEmptyGameField, GameField } from "./model/domain/game-field";
 import { createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { slicesRegistry } from "@/shared/store";
 import { GameHistory } from "./model/domain/game-history";
+import { defaultTimers, GameTimers } from "./model/domain/game-timers";
 
 // State
 type GameState = {
@@ -17,15 +19,12 @@ type GameState = {
     gameStatus: GameStatus;
   }[];
   activeIndex: number;
+  gameTimers: GameTimers;
 };
 
 const initialState: GameState = {
-  history: [
-    {
-      gameField: createEmptyGameField(),
-      gameStatus: getInitialGameStatus(),
-    },
-  ],
+  history: [],
+  gameTimers: defaultTimers(),
   activeIndex: 0,
 };
 
@@ -35,15 +34,16 @@ export const gameSlice = createSlice({
   reducers: {},
   selectors: {
     selectGameField: (state): GameField =>
-      state.history[state.activeIndex].gameField,
+      state.history[state.activeIndex]?.gameField ?? createEmptyGameField(),
     selectGameStatus: (state): GameStatus =>
-      state.history[state.activeIndex].gameStatus,
+      state.history[state.activeIndex]?.gameStatus ?? getInitialGameStatus(),
     selectGameHistory: (state): GameHistory => {
       return {
         currentIndex: state.activeIndex,
         lastIndex: state.history.length - 1,
       };
     },
+    selectGameTimers: (state): GameTimers => state.gameTimers,
   },
   extraReducers: (builder) => {
     builder.addCase(historyViewedEvent, (state, action) => {
@@ -51,6 +51,12 @@ export const gameSlice = createSlice({
     });
     builder.addCase(gameViewedEvent, (state) => {
       state.activeIndex = state.history.length - 1;
+    });
+    builder.addCase(gameStartedEvent, (state, action) => {
+      state.history.push({
+        gameField: createEmptyGameField(),
+        gameStatus: action.payload.gameStatus,
+      });
     });
     builder.addMatcher(
       isAnyOf(moveCompletedEvent, gameOverEvent),
@@ -60,6 +66,7 @@ export const gameSlice = createSlice({
           gameStatus: action.payload.gameStatus,
         });
         state.activeIndex++;
+        state.gameTimers = action.payload.gameTimers;
       },
     );
   },
