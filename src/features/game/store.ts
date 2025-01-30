@@ -37,6 +37,9 @@ export const gameSlice = createSlice({
       state.history[state.activeIndex]?.gameField ?? createEmptyGameField(),
     selectGameStatus: (state): GameStatus =>
       state.history[state.activeIndex]?.gameStatus ?? getInitialGameStatus(),
+    selectLastGameStatus: (state): GameStatus => 
+      state.history[state.history.length - 1]?.gameStatus ??
+        getInitialGameStatus(),
     selectGameHistory: (state): GameHistory => {
       return {
         currentIndex: state.activeIndex,
