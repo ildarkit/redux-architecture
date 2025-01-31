@@ -37,13 +37,10 @@ export function updateTimer({
   };
 }
 
-export function incrementTimer({
-  timers,
-  symbol,
-}: {
+export function incrementTimer(
   timers: GameTimers,
   symbol: GameSymbol,
-}) {
+) {
   const timer = timers[symbol];
 
   return {
