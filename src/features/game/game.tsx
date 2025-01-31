@@ -18,6 +18,9 @@ import { selectGameHistoryControls } from "./model/selectors/game-history-contro
 import { selectGameMoveInfo } from "./model/selectors/game-move-info";
 import { selectGameWinnerInfo } from "./model/selectors/game-winner-info";
 import { selectGameCells } from "./model/selectors/game-cells";
+import { selectCanStart } from "./model/selectors/can-start";
+import { UiButton } from "@/shared/uikit/ui-button";
+import { startGame } from "./model/use-cases/start-game";
 
 const PLAYERS_COUNT = 4;
 
@@ -26,6 +29,7 @@ export function Game() {
   const gameMoveInfo = useAppSelector(selectGameMoveInfo);
   const gameWinnerInfo = useAppSelector(selectGameWinnerInfo);
   const gameCells = useAppSelector(selectGameCells);
+  const canStart = useAppSelector(selectCanStart);
 
   const actions = bindActionCreators(
     {
@@ -33,6 +37,7 @@ export function Game() {
       historyForward,
       historyBack,
       backToGame,
+      startGame,
     },
     useAppDispatch(),
   );
@@ -41,6 +46,7 @@ export function Game() {
   const handleForwardClick = () => actions.historyForward();
   const handleBackClick = () => actions.historyBack();
   const handleBackToGameClick = () => actions.backToGame();
+  const handleStartGame = () => actions.startGame();
 
   return (
     <>
@@ -51,12 +57,18 @@ export function Game() {
           <GameInfo isRatingGame playersCount={4} timeMode={"1 мин на ход"} />
         }
         actions={
-          <GameHistoryView
-            controls={gameHistoryControls}
-            onBackClick={handleBackClick}
-            onForwardClick={handleForwardClick}
-            onBackToGameClick={handleBackToGameClick}
-          />
+          canStart ? (
+            <UiButton size="md" variant="primary" onClick={handleStartGame}>
+              Начать
+            </UiButton>
+          ) : (
+            <GameHistoryView
+              controls={gameHistoryControls}
+              onBackClick={handleBackClick}
+              onForwardClick={handleForwardClick}
+              onBackToGameClick={handleBackToGameClick}
+            />
+          ) 
         }
         playersList={PLAYERS.slice(0, PLAYERS_COUNT).map((player) => {
           return (

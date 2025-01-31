@@ -4,6 +4,7 @@ import {
   gameViewedEvent,
   historyViewedEvent,
   moveCompletedEvent,
+  timeOverEvent,
 } from "./model/events";
 import { GameStatus, getInitialGameStatus } from "./model/domain/game-status";
 import { createEmptyGameField, GameField } from "./model/domain/game-field";
@@ -62,7 +63,7 @@ export const gameSlice = createSlice({
       });
     });
     builder.addMatcher(
-      isAnyOf(moveCompletedEvent, gameOverEvent),
+      isAnyOf(moveCompletedEvent, gameOverEvent, timeOverEvent),
       (state, action) => {
         state.history.push({
           gameField: action.payload.gameField,
