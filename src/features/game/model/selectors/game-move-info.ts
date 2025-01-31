@@ -8,7 +8,10 @@ export const selectGameMoveInfo = createSelector(
     if (gameStatus.type === "in-progress") {
       return {
         currentSymbol: gameStatus.symbol,
-        nextSymbol: getNextGameSymbol(gameStatus.symbol),
+        nextSymbol: getNextGameSymbol(
+          gameStatus.symbol,
+          gameStatus.players,
+        ),
       };
     }
 

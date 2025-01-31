@@ -15,7 +15,7 @@ export const selectGameCells = createSelector(
       return gameField.map((cell, index): GameCell => {
         return {
           symbol: cell,
-          isWinner: gameStatus.winnerIndexes.includes(index),
+          isWinner: gameStatus.winnerIndexes?.includes(index) ?? false,
         };
       });
     }
